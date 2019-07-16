@@ -7,6 +7,10 @@ CSS syntax validator based on [csstree](https://github.com/csstree/csstree) as p
 
 > Validator is designed to check CSS syntax only. However PostCSS (that used by stylelint as backend) may parse other syntaxes like Less or Sass and can be used for these syntaxes too. In this case validator is limited to check declaration that doesn't contain any CSS extension (e.g. variables).
 
+# Fork
+
+This fork allows element units (`ew|eh|emin|emax`). It is meant to be used with `@brandonkal/postcss-element-units`.
+
 ## Install
 
 ```
@@ -19,9 +23,7 @@ Setup plugin in your [stylelint config](http://stylelint.io/user-guide/configura
 
 ```json
 {
-  "plugins": [
-    "stylelint-csstree-validator"
-  ],
+  "plugins": ["stylelint-csstree-validator"],
   "rules": {
     "csstree/validator": true
   }
@@ -39,9 +41,7 @@ Defines a list of property names that should be ignored by the validator.
 
 ```json
 {
-  "plugins": [
-    "stylelint-csstree-validator"
-  ],
+  "plugins": ["stylelint-csstree-validator"],
   "rules": {
     "csstree/validator": {
       "ignore": ["composes", "foo", "bar"]

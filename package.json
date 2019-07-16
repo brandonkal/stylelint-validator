@@ -1,9 +1,10 @@
 {
-  "name": "stylelint-csstree-validator",
+  "name": "@brandonkal/stylelint-csstree-validator",
   "version": "1.5.2",
+  "versionUpstream": "1.5.2",
   "description": "Stylelint plugin to validate CSS syntax",
   "homepage": "https://github.com/csstree/validator",
-  "author": "Roman Dvornov <rdvornov@gmail.com>",
+  "author": "Brandon Kalinowski @brandonkal",
   "license": "MIT",
   "repository": "csstree/stylelint-validator",
   "bugs": {
