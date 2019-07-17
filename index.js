@@ -43,9 +43,19 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
       if (/[#$@]/.test(decl.prop)) {
         return
       }
+      // ignore values with interpolations. These are tested with csstyper.
+      if (/\${/.test(decl.value)) {
+        return
+      }
+
+      // Object styles with numerical literal values need to be replaced with px
+      var testValue = decl.value
+      if (decl.root().source.lang === 'object-literal' && !isNaN(testValue)) {
+        testValue += 'px'
+      }
 
       try {
-        value = csstree.parse(eunits(decl.value), {
+        value = csstree.parse(eunits(testValue), {
           context: 'value',
           property: decl.prop,
         })
