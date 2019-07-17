@@ -48,13 +48,19 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
         return
       }
 
-      // Object styles with numerical literal values need to be replaced with px
-      var testValue = decl.value
-      if (decl.root().source.lang === 'object-literal' && !isNaN(testValue)) {
-        testValue += 'px'
-      }
-
       try {
+        // Object styles with numerical literal values need to be replaced with px
+        var testValue = decl.value
+        if (
+          decl.root().source.lang === 'object-literal' ||
+          decl.raws.node.type === 'ObjectProperty'
+        ) {
+          const t = decl.raws.node.value.type
+          if (!(t === 'NumericLiteral' || t === 'StringLiteral')) {
+            return
+          }
+          if (!isNaN(testValue)) testValue += 'px'
+        }
         value = csstree.parse(eunits(testValue), {
           context: 'value',
           property: decl.prop,
