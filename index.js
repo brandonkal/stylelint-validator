@@ -63,14 +63,13 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
           property: decl.prop,
         })
       } catch (e) {
-        console.log('Error:', e)
         // ignore values with preprocessor's extensions
         if (e.type === 'PreprocessorExtensionError') {
           return
         }
 
         return stylelint.utils.report({
-          message: messages.parseError(decl.value),
+          message: messages.parseError(e),
           node: decl,
           result: result,
           ruleName: ruleName,
