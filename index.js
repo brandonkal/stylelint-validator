@@ -69,7 +69,7 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
         }
 
         return stylelint.utils.report({
-          message: messages.parseError(e),
+          message: messages.parseError(decl.value),
           node: decl,
           result: result,
           ruleName: ruleName,
