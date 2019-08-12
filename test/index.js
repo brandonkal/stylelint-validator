@@ -20,6 +20,7 @@ jsx(null, function(tr) {
   tr.ok(`const T = styled.div({ fontSize: 16 })`)
   tr.ok(`const T = styled.div({ fontWeight: 400 })`)
   tr.ok(`const T = styled.div({ flexGrow: 1 })`)
+  tr.ok('const T = styled.div`margin-left: 1rem;flex: 0 0 auto;`')
   tr.notOk(
     `const T = styled.div({ color: 'redder' })`,
     messages.invalid('color')
