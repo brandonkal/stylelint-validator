@@ -18,6 +18,20 @@ function eunits(value) {
   })
 }
 
+function parse(property, value) {
+  return csstree.parse(eunits(value), {
+    context: 'value',
+    property,
+  })
+}
+
+function shouldReturn(error) {
+  return (
+    !error ||
+    (error.name !== 'SyntaxMatchError' && error.name !== 'SyntaxReferenceError')
+  )
+}
+
 module.exports = stylelint.createPlugin(ruleName, function(options) {
   let ignore = false
   options = options || {}
@@ -32,6 +46,7 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
   return function(root, result) {
     root.walkDecls(function(decl) {
       let value
+      let valueWithPX
 
       // ignore properties from ignore list
       if (ignore && ignore[decl.prop.toLowerCase()]) {
@@ -51,17 +66,19 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
       try {
         // Object styles with numerical literal values need to be replaced with px
         let testValue = decl.value
+        let addPX = false
         if (decl.root().source.lang === 'object-literal') {
           const t = decl.raws.node.value.type
+          // Don't attempt to validate complex nodes i.e. terenary.
           if (!(t === 'NumericLiteral' || t === 'StringLiteral')) {
             return
           }
-          if (!isNaN(testValue) && t === 'NumericLiteral') testValue += 'px'
+          addPX = !isNaN(testValue) && t === 'NumericLiteral'
         }
-        value = csstree.parse(eunits(testValue), {
-          context: 'value',
-          property: decl.prop,
-        })
+        value = parse(decl.prop, value)
+        if (addPX) {
+          valueWithPX = parse(decl.prop, (testValue += 'px'))
+        }
       } catch (e) {
         // ignore values with preprocessor's extensions
         if (e.type === 'PreprocessorExtensionError') {
@@ -76,30 +93,35 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
         })
       }
 
-      const match = syntax.matchProperty(decl.prop, value)
-      const error = match.error
-      if (error) {
-        let message = error.rawMessage || error.message || error
+      let match = syntax.matchProperty(decl.prop, value)
+      let error = match.error
 
-        // ignore errors except those which make sense
-        if (
-          error.name !== 'SyntaxMatchError' &&
-          error.name !== 'SyntaxReferenceError'
-        ) {
-          return
-        }
+      if (shouldReturn(error)) return
 
-        if (message === 'Mismatch') {
+      let message = error.rawMessage || error.message || error
+
+      if (message === 'Mismatch') {
+        if (valueWithPX) {
+          // Test again with 'px' appended to the input number
+          let matchPX = syntax.matchProperty(decl.prop, valueWithPX)
+          let errorPX = matchPX.error
+          if (shouldReturn(errorPX)) return
+
+          message = errorPX.rawMessage || errorPX.message || errorPX
+          if (message === 'Mismatch') {
+            message = messages.invalid(decl.prop)
+          }
+        } else {
           message = messages.invalid(decl.prop)
         }
-
-        stylelint.utils.report({
-          message: message,
-          node: decl,
-          result: result,
-          ruleName: ruleName,
-        })
       }
+
+      stylelint.utils.report({
+        message: message,
+        node: decl,
+        result: result,
+        ruleName: ruleName,
+      })
     })
   }
 })

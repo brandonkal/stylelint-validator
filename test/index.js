@@ -15,9 +15,15 @@ var jsx = ruleTester(validator.rule, validator.ruleName, {
 jsx(null, function(tr) {
   tr.ok('const Btn = styled.div`color:red;`')
   tr.notOk('const Btn = styled.div`color:redder;`', messages.invalid('color'))
-  tr.ok(`const T = { opacity: shadow.top ? 1 : 0 }
-
-  `)
+  tr.ok(`const T = styled.div({ opacity: shadow.top ? 'ignored' : 0 })`)
+  tr.ok(`const T = styled.div({ opacity: 1 })`)
+  tr.ok(`const T = styled.div({ fontSize: 16 })`)
+  tr.ok(`const T = styled.div({ fontWeight: 400 })`)
+  tr.ok(`const T = styled.div({ flexGrow: 1 })`)
+  tr.notOk(
+    `const T = styled.div({ color: 'redder' })`,
+    messages.invalid('color')
+  )
 })
 
 // base test
