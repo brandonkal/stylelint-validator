@@ -1,9 +1,9 @@
-var stylelint = require('stylelint')
-var csstree = require('css-tree').fork(require('./syntax-extension'))
-var syntax = csstree.lexer
+const stylelint = require('stylelint')
+const csstree = require('css-tree').fork(require('./syntax-extension'))
+const syntax = csstree.lexer
 
-var ruleName = 'csstree/validator'
-var messages = stylelint.utils.ruleMessages(ruleName, {
+const ruleName = 'csstree/validator'
+const messages = stylelint.utils.ruleMessages(ruleName, {
   parseError: function(value) {
     return 'Can\'t parse value "' + value + '"'
   },
@@ -19,7 +19,7 @@ function eunits(value) {
 }
 
 module.exports = stylelint.createPlugin(ruleName, function(options) {
-  var ignore = false
+  let ignore = false
   options = options || {}
 
   if (Array.isArray(options.ignore)) {
@@ -31,7 +31,7 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
 
   return function(root, result) {
     root.walkDecls(function(decl) {
-      var value
+      let value
 
       // ignore properties from ignore list
       if (ignore && ignore[decl.prop.toLowerCase()]) {
@@ -50,7 +50,7 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
 
       try {
         // Object styles with numerical literal values need to be replaced with px
-        var testValue = decl.value
+        let testValue = decl.value
         if (decl.root().source.lang === 'object-literal') {
           const t = decl.raws.node.value.type
           if (!(t === 'NumericLiteral' || t === 'StringLiteral')) {
@@ -76,10 +76,10 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
         })
       }
 
-      var match = syntax.matchProperty(decl.prop, value)
-      var error = match.error
+      const match = syntax.matchProperty(decl.prop, value)
+      const error = match.error
       if (error) {
-        var message = error.rawMessage || error.message || error
+        let message = error.rawMessage || error.message || error
 
         // ignore errors except those which make sense
         if (
