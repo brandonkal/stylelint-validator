@@ -8,6 +8,17 @@ var less = ruleTester(validator.rule, validator.ruleName, {
 var sass = ruleTester(validator.rule, validator.ruleName, {
   postcssOptions: { syntax: require('postcss-scss') },
 })
+var jsx = ruleTester(validator.rule, validator.ruleName, {
+  postcssOptions: { syntax: require('postcss-jsx') },
+})
+
+jsx(null, function(tr) {
+  tr.ok('const Btn = styled.div`color:red;`')
+  tr.notOk('const Btn = styled.div`color:redder;`', messages.invalid('color'))
+  tr.ok(`const T = { opacity: shadow.top ? 1 : 0 }
+
+  `)
+})
 
 // base test
 css(null, function(tr) {
