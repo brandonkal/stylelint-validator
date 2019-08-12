@@ -24,7 +24,7 @@
     "travis": "npm run test"
   },
   "dependencies": {
-    "css-tree": "1.0.0-alpha.33"
+    "css-tree": "^1.0.0-alpha.34"
   },
   "peerDependencies": {
     "stylelint": ">=7.0.0 <11.0.0"
