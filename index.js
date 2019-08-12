@@ -21,7 +21,7 @@ function eunits(value) {
 function parse(property, value) {
   return csstree.parse(eunits(value), {
     context: 'value',
-    property,
+    property: property,
   })
 }
 
@@ -75,7 +75,7 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
           }
           addPX = !isNaN(testValue) && t === 'NumericLiteral'
         }
-        value = parse(decl.prop, value)
+        value = parse(decl.prop, testValue)
         if (addPX) {
           valueWithPX = parse(decl.prop, (testValue += 'px'))
         }
